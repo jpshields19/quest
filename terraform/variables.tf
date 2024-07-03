@@ -10,6 +10,12 @@ variable "region" {
     default = "us-central1"
 }   
 
-variable "repo_name" {
-    default = "jpshields19/quest"
+variable "services" {
+    default = [
+        "iam.googleapis.com",
+        "container.googleapis.com",
+        "compute.googleapis.com",
+        "artifactregistry.googleapis.com",
+        
+    ]
 }
