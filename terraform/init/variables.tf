@@ -20,14 +20,15 @@ variable "services" {
         "container.googleapis.com",
         "compute.googleapis.com",
         "artifactregistry.googleapis.com",
-        
+         "run.googleapis.com"
     ]
 }
 
 variable "github-roles" {
     default = [
         "roles/artifactregistry.admin",
-        "roles/iam.serviceAccountCreator"
+        "roles/iam.serviceAccountCreator",
+        "roles/run.admin"
     ]
   
 }

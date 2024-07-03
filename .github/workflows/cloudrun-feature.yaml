@@ -40,9 +40,18 @@ jobs:
         registry: us-central1-docker.pkg.dev
         image_name: justin-quest/justin-quest/${{ env.SERVICE_NAME }}
         image_tag: ${{ github.sha }}
+    - name: Check if Cloud Run service exists
+      id: check_service
+      run: |
+        if gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{env.REGION}} --platform=managed &>/dev/null; then
+          echo "service_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "service_exists=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
+      if: steps.check_service.outputs.service_exists == 'true'
       with:
         service: ${{ env.SERVICE_NAME }}
         region: ${{ env.REGION }}

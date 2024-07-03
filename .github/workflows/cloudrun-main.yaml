@@ -2,10 +2,12 @@ name: Build and Deploy (All Traffic)
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - 'Dockerfile'
       - 'quest/**'
+      - .github/workflows/cloudrun-*
 
 env:
   PROJECT_ID: justin-quest
@@ -14,29 +16,28 @@ env:
 
 jobs:
   build-and-deploy:
-    if: github.event.inputs.confirm == 'yes'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
+      with:
+        submodules: recursive
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
-        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+        credentials_json: '${{ secrets.GCP_KEY }}'
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
 
     - name: 'Use gcloud CLI'
       run: 'gcloud info'
-
     - name: Build and Push Image
       uses: whoan/docker-build-with-cache-action@master
       with:
-        username: _json_key
+        username: _json_key_base64
         password: ${{ secrets.GCP_KEY }}
-        registry: gcr.io
-        image_name: ${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}
+        registry: ${{env.REGION}}-docker.pkg.dev
+        image_name: justin-quest/justin-quest/${{ env.SERVICE_NAME }}
         image_tag: ${{ github.sha }}
 
     - name: Deploy to Cloud Run
@@ -44,5 +45,5 @@ jobs:
       with:
         service: ${{ env.SERVICE_NAME }}
         region: ${{ env.REGION }}
-        image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        image: ${{env.REGION}}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
         tag: ${{ github.sha }}
