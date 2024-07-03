@@ -23,7 +23,7 @@ jobs:
       with:
         submodules: recursive
     - id: short_sha
-      run: echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:

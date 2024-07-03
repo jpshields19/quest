@@ -21,14 +21,14 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+    - id: short_sha
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GCP_KEY }}'
-
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
-
     - name: 'Use gcloud CLI'
       run: 'gcloud info'
     - name: Build and Push Image
@@ -38,12 +38,12 @@ jobs:
         password: ${{ secrets.GCP_KEY }}
         registry: ${{env.REGION}}-docker.pkg.dev
         image_name: justin-quest/justin-quest/${{ env.SERVICE_NAME }}
-        image_tag: ${{ github.sha }}
+        image_tag: ${{ steps.short_sha.outputs.SHORT_SHA }}
 
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
       with:
         service: ${{ env.SERVICE_NAME }}
         region: ${{ env.REGION }}
-        image: ${{env.REGION}}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        tag: ${{ github.sha }}
+        image: ${{env.REGION}}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ steps.short_sha.outputs.SHORT_SHA }}
+        tag: ${{ steps.short_sha.outputs.SHORT_SHA }}
