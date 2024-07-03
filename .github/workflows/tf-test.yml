@@ -21,6 +21,10 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: ${{ secrets.GCP_KEY }}
       - name: init
         run: terraform -chdir=terraform/ init
       - name: plan
