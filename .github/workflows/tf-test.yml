@@ -41,6 +41,11 @@ jobs:
         with:
           name: tfplan
           path: terraform/tfplan
+      - name: Save lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: tflock
+          path: terraform/.terraform.lock.hcl
       - name: check
         run: echo ${{github.ref}}
 
@@ -67,6 +72,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan
+          path: terraform/
       - name: Apply
         run: terraform -chdir=terraform/ apply -auto-approve tfplan
 
