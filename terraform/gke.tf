@@ -20,7 +20,7 @@ resource google_container_node_pool pool {
     machine_type    = "n1-standard-1"
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
     preemptible     = true
-    service_account = google_s
+    service_account = google_service_account.cluster.email
     tags            = ["general", "${var.cluster_name}"]
   }
     
