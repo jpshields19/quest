@@ -9,3 +9,7 @@ variable "cluster_name" {
 variable "region" {
     default = "us-central1"
 }   
+
+variable "repo_name" {
+    default = "quest"
+}

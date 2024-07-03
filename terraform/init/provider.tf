@@ -4,11 +4,19 @@ provider google {
   # credentials = pathexpand(var.credentials)
 }
 
+provider "github" {
+  owner = "jpshields19"
+  token = ""
+}
+
 terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-    #   version     = "4.59.0"
+    }
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
     }
   }
 }
