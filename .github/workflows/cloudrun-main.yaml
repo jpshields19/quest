@@ -42,7 +42,7 @@ jobs:
         username: _json_key_base64
         password: ${{ secrets.GCP_KEY }}
         registry: ${{env.REGION}}-docker.pkg.dev
-        image_name: justin-quest/quest/${{ env.SERVICE_NAME }}
+        image_name: justin-quest/justin-quest/${{ env.SERVICE_NAME }}
         image_tag: ${{ steps.image_tag.outputs.IMAGE_TAG }}
 
     - name: Deploy to Cloud Run
@@ -50,5 +50,5 @@ jobs:
       with:
         service: ${{ env.SERVICE_NAME }}
         region: ${{ env.REGION }}
-        image: ${{env.REGION}}-docker.pkg.dev/justin-quest/quest/${{ env.SERVICE_NAME }}:${{ steps.image_tag.outputs.IMAGE_TAG }}
+        image: ${{env.REGION}}-docker.pkg.dev/justin-quest/justin-quest/${{ env.SERVICE_NAME }}:${{ steps.image_tag.outputs.IMAGE_TAG }}
         tag: ${{ steps.revision_tag.outputs.REVISION_TAG }}
