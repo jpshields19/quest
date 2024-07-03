@@ -13,3 +13,11 @@ resource "google_storage_bucket_iam_member" "member" {
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.github-terraform.email}"
 }
+
+resource "google_project_iam_member" "github-roles" {
+  for_each = toset(var.github-roles)
+  project = var.project_id
+  role = each.key
+  member = "serviceAccount:${google_service_account.github-terraform.email}"
+  
+}

@@ -23,3 +23,11 @@ variable "services" {
         
     ]
 }
+
+variable "github-roles" {
+    default = [
+        "roles/artifactregistry.admin",
+        "roles/iam.serviceAccountCreator"
+    ]
+  
+}
