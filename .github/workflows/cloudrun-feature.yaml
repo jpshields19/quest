@@ -31,6 +31,8 @@ jobs:
 
     - name: 'Use gcloud CLI'
       run: 'gcloud info'
+    - name: check quest
+      run: ls -lrta quest/
 
     - name: Build and Push Image
       uses: whoan/docker-build-with-cache-action@master
