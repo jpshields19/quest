@@ -13,3 +13,13 @@ variable "region" {
 variable "repo_name" {
     default = "quest"
 }
+
+variable "services" {
+    default = [
+        "iam.googleapis.com",
+        "container.googleapis.com",
+        "compute.googleapis.com",
+        "artifactregistry.googleapis.com",
+        
+    ]
+}
