@@ -1,6 +1,5 @@
 data "google_service_account" "github-terraform" {
   account_id   = "github-terraform"
-  depends_on = [ google_project_service.services["iam.googleapis.com"] ]
 }
 
 # resource "google_service_account_key" "github-terraform" {
