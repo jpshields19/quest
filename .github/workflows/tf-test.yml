@@ -22,9 +22,9 @@ jobs:
         with:
           terraform_wrapper: false
       - name: init
-        run: terraform init
+        run: terraform -chdir=terraform/ init
       - name: plan
-        run: terraform plan -out tfplan
+        run: terraform plan -out -chdir=terraform/ tfplan
       - name: Save plan
         uses: actions/upload-artifact@v4
         with:
@@ -44,13 +44,13 @@ jobs:
         with:
           terraform_wrapper: false
       - name: init
-        run: terraform init
+        run: terraform -chdir=terraform/ init
       - name: Get Terraform Plan
         uses: actions/download-artifact@v4
         with:
           name: tfplan
       - name: Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -chdir=terraform/ tfplan
 
 
 
