@@ -28,7 +28,7 @@ jobs:
       - name: init
         run: terraform -chdir=terraform/ init
       - name: plan
-        run: terraform plan -chdir=terraform/ -out tfplan
+        run: terraform -chdir=terraform plan -out tfplan
       - name: Save plan
         uses: actions/upload-artifact@v4
         with:
@@ -58,7 +58,7 @@ jobs:
         with:
           name: tfplan
       - name: Apply
-        run: terraform apply -auto-approve -chdir=terraform/ tfplan
+        run: terraform -chdir=terraform/ apply -auto-approve tfplan
 
 
 
