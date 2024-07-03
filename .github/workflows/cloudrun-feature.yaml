@@ -32,13 +32,10 @@ jobs:
 
     - name: 'Use gcloud CLI'
       run: 'gcloud info'
-    - name: check quest
-      run: ls -lrta quest/
-
     - name: Build and Push Image
       uses: whoan/docker-build-with-cache-action@master
       with:
-        username: _json_key
+        username: _json_key_base64
         password: ${{ secrets.GCP_KEY }}
         registry: us-central1-docker.pkg.dev
         image_name: justin-quest/justin-quest/${{ env.SERVICE_NAME }}
