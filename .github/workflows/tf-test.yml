@@ -1,0 +1,56 @@
+name: Terraform test
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform-plan:
+    name: Plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure tf
+        uses: hashicorp/setup-terraform
+        with:
+          terraform_wrapper: false
+      - name: init
+        run: terraform init
+      - name: plan
+        run: terraform plan -out tfplan
+      - name: Save plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+
+  terraform-apply:
+    needs: terraform-plan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure tf
+        uses: hashicorp/setup-terraform
+        with:
+          terraform_wrapper: false
+      - name: init
+        run: terraform init
+      - name: Get Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+      - name: Apply
+        run: terraform apply -auto-approve tfplan
+
+
+
