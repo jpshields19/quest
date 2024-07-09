@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencyrpt-staging-issuer
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencyrpt-issuer-account-key
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: nginx
+    # - dns01:
+    #     cloudDNS:
+    #       project: justin-quest
+        

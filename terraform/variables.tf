@@ -10,12 +10,3 @@ variable "region" {
     default = "us-central1"
 }   
 
-variable "services" {
-    default = [
-        "iam.googleapis.com",
-        "container.googleapis.com",
-        "compute.googleapis.com",
-        "artifactregistry.googleapis.com",
-        
-    ]
-}

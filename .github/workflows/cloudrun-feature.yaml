@@ -62,4 +62,6 @@ jobs:
         image: ${{env.REGION}}-docker.pkg.dev/justin-quest/justin-quest/${{ env.SERVICE_NAME }}:${{ steps.image_tag.outputs.IMAGE_TAG }}
         tag: ${{ steps.revision_tag.outputs.REVISION_TAG }}
         flags: --port=3000
+        env_vars: |-
+          SECRET_WORD=TwelveFactor
         no_traffic: true

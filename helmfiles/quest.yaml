@@ -1,0 +1,37 @@
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+
+releases:
+  # Cert manager
+  - name: "cert-manager"
+    namespace: "cert-manager"
+    labels:
+      release: quest
+    chart: jetstack/cert-manager
+    values:
+      - serviceAccount.annotations:
+          "iam.gke.io/gcp-service-account=letsencrypt-google@justin-quest.iam.gserviceaccount.com"
+    set:
+      - name: crds.enabled
+        value: "true"
+  - name: quest
+    namespace: quest
+    labels:
+      release: quest
+    chart: ../charts/quest
+    values:
+      - project_id: justin-quest
+      - ../values/quest.yaml
+  - name: ingress-nginx
+    chart: ingress-nginx/ingress-nginx
+    labels:
+      release: quest
+    namespace: quest
+    set:
+      - name: controller.service.loadBalancerIP
+        value: "34.173.190.130"
+  
+      
