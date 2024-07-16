@@ -1,0 +1,23 @@
+image:
+  repository: us-central1-docker.pkg.dev/justin-quest/justin-quest/quest
+  tag: init-821da45
+service:
+  port: 3000
+ingress:
+  enabled: true
+  className: "nginx"  # Adjust if you're using a different ingress controller
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/issuer: "letsencyrpt-prod-issuer"  # Use the name of your ClusterIssuer
+  hosts:
+    - host: tryquests.xyz
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: quest-tls
+      hosts:
+        - tryquests.xyz
+extraEnv:
+  SECRET_WORD: TwelveFactor
+      

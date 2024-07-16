@@ -1,0 +1,8 @@
+# Ignore terraform files
+**/.terraform*
+**/terraform.tfstate*
+
+#env files
+**/.env
+
+**key.json

@@ -1,0 +1,67 @@
+name: Build and Deploy (No Traffic)
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile'
+      - 'quest/**'
+      - .github/workflows/cloudrun-*
+
+env:
+  PROJECT_ID: justin-quest
+  SERVICE_NAME: quest
+  REGION: us-central1
+  SECRET_WORD: "foobar"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - id: image_tag
+      run: |
+        echo "IMAGE_TAG=${GITHUB_HEAD_REF////-}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        
+    - id: revision_tag
+      run: echo "REVISION_TAG=$(echo ${{ steps.image_tag.outputs.IMAGE_TAG }} | sed -E 's/[A-Z]/\L/g; s/(.{30}[^-]).*/\1/g; s/_/-/g; s/-+$//g')" >> $GITHUB_OUTPUT
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_KEY }}'
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
+    - name: Build and Push Image
+      uses: whoan/docker-build-with-cache-action@master
+      with:
+        username: _json_key_base64
+        password: ${{ secrets.GCP_KEY }}
+        registry: ${{env.REGION}}-docker.pkg.dev
+        image_name: justin-quest/justin-quest/${{ env.SERVICE_NAME }}
+        image_tag: ${{ steps.image_tag.outputs.IMAGE_TAG }}
+    - name: Check if Cloud Run service exists
+      id: check_service
+      run: |
+        if gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{env.REGION}} --platform=managed &>/dev/null; then
+          echo "service_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "service_exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v1
+      if: steps.check_service.outputs.service_exists == 'true'
+      with:
+        service: ${{ env.SERVICE_NAME }}
+        region: ${{ env.REGION }}
+        image: ${{env.REGION}}-docker.pkg.dev/justin-quest/justin-quest/${{ env.SERVICE_NAME }}:${{ steps.image_tag.outputs.IMAGE_TAG }}
+        tag: ${{ steps.revision_tag.outputs.REVISION_TAG }}
+        flags: --port=3000
+        env_vars: |-
+          SECRET_WORD=TwelveFactor
+        no_traffic: true
